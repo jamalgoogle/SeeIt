@@ -43,6 +43,7 @@
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
+            height: 8px;
         }
         ::-webkit-scrollbar-track {
             background: #050811;
@@ -53,6 +54,15 @@
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #00F0FF;
+        }
+
+        /* Horizontal rows (movies / series) */
+        .h-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 14px;
+            scrollbar-width: thin;
+            scrollbar-color: #1e293b transparent;
         }
 
         /* Glassmorphism Effect */
@@ -92,13 +102,13 @@
         }
 
         .accordion-card.expanded {
-            flex: 3.8;
+            flex: 3.8 0 min(480px, 80vw);
             border-color: #00F0FF;
             box-shadow: 0 0 25px rgba(0, 240, 255, 0.15);
         }
 
         .accordion-card.collapsed {
-            flex: 1;
+            flex: 1 0 150px;
             border-color: rgba(255, 255, 255, 0.1);
         }
 
@@ -149,6 +159,9 @@
                     <span class="w-2 h-2 rounded-full bg-brand-redLive animate-pulse"></span>
                     Live Channels
                 </a>
+                <a href="#programs" class="hidden xl:inline hover:text-brand-cyan transition">Programs</a>
+                <a href="#cartoons" class="hidden xl:inline hover:text-brand-cyan transition">Cartoons</a>
+                <a href="#gameplay-live" class="hidden xl:inline hover:text-brand-cyan transition">Gaming</a>
                 <a href="#categories" class="hover:text-brand-cyan transition">Genres</a>
             </nav>
         </div>
@@ -178,8 +191,8 @@
 
             <!-- Left Hero Content -->
             <div class="relative z-20 max-w-2xl space-y-6 pt-8">
-                <div class="inline-flex items-center gap-2 bg-brand-cyan/10 border border-brand-cyan/30 px-3.5 py-1.5 rounded-full text-brand-cyan text-xs font-bold uppercase tracking-widest backdrop-blur-md">
-                    <span class="w-2 h-2 rounded-full bg-brand-cyan animate-pulse"></span> GOLDEN GLOBE NOMINEE
+                <div id="hero-badge" class="hidden inline-flex items-center gap-2 bg-brand-cyan/10 border border-brand-cyan/30 px-3.5 py-1.5 rounded-full text-brand-cyan text-xs font-bold uppercase tracking-widest backdrop-blur-md">
+                    <span class="w-2 h-2 rounded-full bg-brand-cyan animate-pulse"></span> <span id="hero-badge-text"></span>
                 </div>
 
                 <h1 id="hero-title" class="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight uppercase leading-none drop-shadow-2xl"></h1>
@@ -194,7 +207,7 @@
 
                 <div class="flex flex-wrap items-center gap-4 pt-2">
                     <button id="hero-trailer-btn" class="bg-brand-cyan hover:bg-brand-cyanHover text-black px-7 py-3.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2.5 transition-all shadow-xl shadow-brand-cyan/30 transform hover:-translate-y-0.5 active:translate-y-0">
-                        <i data-lucide="play" class="w-4 h-4 fill-black"></i> Watch Trailer
+                        <i data-lucide="play" class="w-4 h-4 fill-black"></i> <span id="hero-cta-text">Watch Trailer</span>
                     </button>
                     <a href="#movies" class="bg-slate-900/80 hover:bg-slate-800 text-white border border-slate-700/80 px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all">
                         <i data-lucide="film" class="w-4 h-4 text-brand-cyan"></i> Explore Catalog
@@ -207,7 +220,7 @@
                 <span id="current-slide-num" class="text-xs font-black text-brand-cyan tracking-widest"></span>
                 
                 <div class="relative w-1 h-36 bg-slate-800/80 backdrop-blur-md rounded-full overflow-hidden">
-                    <div id="slide-progress" class="absolute top-0 w-full bg-brand-cyan rounded-full transition-all duration-500" style="height: 16.66%;"></div>
+                    <div id="slide-progress" class="absolute top-0 w-full bg-brand-cyan rounded-full transition-all duration-500" style="height: 0%;"></div>
                 </div>
 
                 <span id="total-slide-num" class="text-xs font-black text-slate-500"></span>
@@ -244,10 +257,11 @@
                     </h2>
                     <p class="text-xs text-slate-400 mt-1">Hover over any title to open details & preview options</p>
                 </div>
+                <div data-scroll-controls="movies-accordion" class="hidden items-center gap-2"><button type="button" data-scroll-for="movies-accordion" data-dir="-1" aria-label="Scroll left" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 hover:border-brand-cyan text-white flex items-center justify-center transition"><i data-lucide="chevron-left" class="w-4 h-4"></i></button><button type="button" data-scroll-for="movies-accordion" data-dir="1" aria-label="Scroll right" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 hover:border-brand-cyan text-white flex items-center justify-center transition"><i data-lucide="chevron-right" class="w-4 h-4"></i></button></div>
             </div>
 
             <!-- Movies Expanding Flex Accordion Container -->
-            <div id="movies-accordion" class="flex flex-col lg:flex-row gap-4 h-[440px] w-full">
+            <div id="movies-accordion" class="h-scroll flex flex-row gap-4 h-[440px] w-full">
                 <!-- Movie Accordion Cards injected via JavaScript -->
             </div>
         </section>
@@ -261,11 +275,46 @@
                     </h2>
                     <p class="text-xs text-slate-400 mt-1">Binge-worthy original sagas with expanding detailed cards</p>
                 </div>
+                <div data-scroll-controls="series-accordion" class="hidden items-center gap-2"><button type="button" data-scroll-for="series-accordion" data-dir="-1" aria-label="Scroll left" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 hover:border-brand-cyan text-white flex items-center justify-center transition"><i data-lucide="chevron-left" class="w-4 h-4"></i></button><button type="button" data-scroll-for="series-accordion" data-dir="1" aria-label="Scroll right" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 hover:border-brand-cyan text-white flex items-center justify-center transition"><i data-lucide="chevron-right" class="w-4 h-4"></i></button></div>
             </div>
 
             <!-- Series Expanding Flex Accordion Container -->
-            <div id="series-accordion" class="flex flex-col lg:flex-row gap-4 h-[440px] w-full">
+            <div id="series-accordion" class="h-scroll flex flex-row gap-4 h-[440px] w-full">
                 <!-- Series Accordion Cards injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- TV Programs Section -->
+        <section id="programs" class="px-6 lg:px-16 py-12 border-t border-white/10">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wider flex items-center gap-3">
+                        <i data-lucide="clapperboard" class="w-6 h-6 text-brand-cyan"></i> TV Programs
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Documentaries, competitions and shows to watch next</p>
+                </div>
+                <div data-scroll-controls="programs-accordion" class="hidden items-center gap-2"><button type="button" data-scroll-for="programs-accordion" data-dir="-1" aria-label="Scroll left" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 hover:border-brand-cyan text-white flex items-center justify-center transition"><i data-lucide="chevron-left" class="w-4 h-4"></i></button><button type="button" data-scroll-for="programs-accordion" data-dir="1" aria-label="Scroll right" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 hover:border-brand-cyan text-white flex items-center justify-center transition"><i data-lucide="chevron-right" class="w-4 h-4"></i></button></div>
+            </div>
+
+            <div id="programs-accordion" class="h-scroll flex flex-row gap-4 h-[440px] w-full">
+                <!-- Cards injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Cartoons Section -->
+        <section id="cartoons" class="px-6 lg:px-16 py-12 border-t border-white/10">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wider flex items-center gap-3">
+                        <i data-lucide="smile" class="w-6 h-6 text-brand-cyan"></i> Cartoons
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Classic and modern animation for the whole family</p>
+                </div>
+                <div data-scroll-controls="cartoons-accordion" class="hidden items-center gap-2"><button type="button" data-scroll-for="cartoons-accordion" data-dir="-1" aria-label="Scroll left" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 hover:border-brand-cyan text-white flex items-center justify-center transition"><i data-lucide="chevron-left" class="w-4 h-4"></i></button><button type="button" data-scroll-for="cartoons-accordion" data-dir="1" aria-label="Scroll right" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 hover:border-brand-cyan text-white flex items-center justify-center transition"><i data-lucide="chevron-right" class="w-4 h-4"></i></button></div>
+            </div>
+
+            <div id="cartoons-accordion" class="h-scroll flex flex-row gap-4 h-[440px] w-full">
+                <!-- Cards injected via JavaScript -->
             </div>
         </section>
 
@@ -346,6 +395,46 @@
             <!-- Live Channels Cards Carousel / Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" id="channels-grid">
                 <!-- Channel Cards Injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Gameplay Live Section -->
+        <section id="gameplay-live" class="px-6 lg:px-16 py-12 border-t border-white/10">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-brand-redLive/10 border border-brand-redLive/30 text-brand-redLive px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2">
+                        <span class="w-2 h-2 rounded-full bg-brand-redLive animate-pulse"></span> Streaming Now
+                    </div>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wider flex items-center gap-3">
+                        <i data-lucide="gamepad-2" class="w-6 h-6 text-brand-cyan"></i> Gameplay Live
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Watch gamers play live, with chat, tips and clutch moments</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-xs text-slate-400 font-bold uppercase"><i data-lucide="users" class="w-3.5 h-3.5 inline text-brand-cyan"></i> <span id="gameplay-viewers">0</span> Watching</span>
+                    <div data-scroll-controls="gameplay-grid" class="hidden items-center gap-2"><button type="button" data-scroll-for="gameplay-grid" data-dir="-1" aria-label="Scroll left" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 hover:border-brand-cyan text-white flex items-center justify-center transition"><i data-lucide="chevron-left" class="w-4 h-4"></i></button><button type="button" data-scroll-for="gameplay-grid" data-dir="1" aria-label="Scroll right" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 hover:border-brand-cyan text-white flex items-center justify-center transition"><i data-lucide="chevron-right" class="w-4 h-4"></i></button></div>
+                </div>
+            </div>
+
+            <div id="gameplay-grid" class="h-scroll flex flex-row gap-4 w-full">
+                <!-- Stream cards injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Game Videos Section -->
+        <section id="game-videos" class="px-6 lg:px-16 py-12 border-t border-white/10">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wider flex items-center gap-3">
+                        <i data-lucide="video" class="w-6 h-6 text-brand-cyan"></i> Game Videos
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Trailers, cinematics and gameplay from the biggest games</p>
+                </div>
+                <div data-scroll-controls="gamevideos-accordion" class="hidden items-center gap-2"><button type="button" data-scroll-for="gamevideos-accordion" data-dir="-1" aria-label="Scroll left" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 hover:border-brand-cyan text-white flex items-center justify-center transition"><i data-lucide="chevron-left" class="w-4 h-4"></i></button><button type="button" data-scroll-for="gamevideos-accordion" data-dir="1" aria-label="Scroll right" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 hover:border-brand-cyan text-white flex items-center justify-center transition"><i data-lucide="chevron-right" class="w-4 h-4"></i></button></div>
+            </div>
+
+            <div id="gamevideos-accordion" class="h-scroll flex flex-row gap-4 h-[440px] w-full">
+                <!-- Cards injected via JavaScript -->
             </div>
         </section>
 
@@ -465,6 +554,9 @@
         let toastTimer = null;
         let searchTimer = null;
 
+        // A missing image should leave a dark card, not a broken-image icon.
+        document.addEventListener('error', (e) => { if (e.target.tagName === 'IMG') e.target.style.visibility = 'hidden'; }, true);
+
         const $ = (id) => document.getElementById(id);
         const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         const pad2 = (n) => String(n).padStart(2, '0');
@@ -572,8 +664,7 @@
         function onAuthChange() {
             renderAuthSlot();
             updateLiveLock();
-            loadMovies().catch(() => {});
-            loadSeries().catch(() => {});
+            loadRows().catch(() => {});
             loadComingSoon().catch(() => {});
         }
 
@@ -665,17 +756,30 @@
             });
 
             const slide = state.slides[state.currentSlide];
+            const isLive = slide.ctaLabel === 'WATCH LIVE';
             $('hero-title').textContent = slide.title;
-            $('hero-rating').textContent = `★ ${Number(slide.rating).toFixed(1)} IMDB`;
+
+            // Slides with no rating (live streams) show a LIVE chip instead of a score.
+            const ratingEl = $('hero-rating');
+            const hasRating = slide.rating !== null && slide.rating !== undefined;
+            ratingEl.textContent = hasRating ? `★ ${Number(slide.rating).toFixed(1)} ${slide.ratingSource || 'IMDB'}` : '● LIVE NOW';
+            ratingEl.classList.toggle('bg-amber-400', hasRating);
+            ratingEl.classList.toggle('text-black', hasRating);
+            ratingEl.classList.toggle('bg-brand-redLive', !hasRating);
+            ratingEl.classList.toggle('text-white', !hasRating);
+
             $('hero-quality').textContent = slide.quality;
             $('hero-genre').textContent = slide.genre;
+            $('hero-badge-text').textContent = slide.badge || '';
+            $('hero-badge').classList.toggle('hidden', !slide.badge);
             $('hero-desc').textContent = slide.description;
+            $('hero-cta-text').textContent = slide.ctaLabel || 'WATCH TRAILER';
             $('current-slide-num').textContent = pad2(state.currentSlide + 1);
             $('slide-progress').style.height = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
 
-            $('hero-trailer-btn').onclick = () => guardedCall('watch trailers', async () => {
+            $('hero-trailer-btn').onclick = () => guardedCall(isLive ? 'watch live streams' : 'watch trailers', async () => {
                 const t = await api(`/hero-slides/${slide.id}/trailer`);
-                openTrailerModal(slide.title, t.trailerUrl);
+                openTrailerModal(slide.title, t.trailerUrl, isLive ? 'Live' : 'Official Trailer');
             });
         }
 
@@ -723,8 +827,28 @@
         const WL_OFF = 'w-9 h-9 rounded-lg bg-slate-900/80 border border-white/20 hover:border-brand-cyan text-white flex items-center justify-center transition';
         const WL_ON = 'w-9 h-9 rounded-lg bg-brand-cyan text-black flex items-center justify-center transition shadow-md shadow-brand-cyan/30';
 
-        async function loadMovies() { renderAccordion('movies-accordion', (await api('/movies')).movies); }
-        async function loadSeries() { renderAccordion('series-accordion', (await api('/series')).series); }
+        // Wording for each kind of title. The titles themselves come from the API.
+        const KINDS = {
+            movie:      { label: 'Movie',      play: 'WATCH TRAILER', clip: 'Official Trailer' },
+            series:     { label: 'Series',     play: 'WATCH TRAILER', clip: 'Official Trailer' },
+            program:    { label: 'Program',    play: 'WATCH PREVIEW', clip: 'Preview' },
+            cartoon:    { label: 'Cartoon',    play: 'WATCH CLIP',    clip: 'Clip' },
+            game_video: { label: 'Game Video', play: 'WATCH VIDEO',   clip: 'Gameplay' }
+        };
+
+        const ROWS = [
+            { id: 'movies-accordion',     path: '/movies',      key: 'movies' },
+            { id: 'series-accordion',     path: '/series',      key: 'series' },
+            { id: 'programs-accordion',   path: '/programs',    key: 'programs' },
+            { id: 'cartoons-accordion',   path: '/cartoons',    key: 'cartoons' },
+            { id: 'gamevideos-accordion', path: '/game-videos', key: 'gameVideos' }
+        ];
+        const SCROLL_ROWS = [...ROWS.map((r) => r.id), 'gameplay-grid'];
+
+        async function loadRows() {
+            const results = await Promise.allSettled(ROWS.map(async (r) => renderAccordion(r.id, (await api(r.path))[r.key])));
+            if (results.some((r) => r.status === 'rejected')) throw new Error('Some rows failed to load');
+        }
 
         function setWatchlistBtn(btn, on) {
             btn.dataset.on = on ? '1' : '0';
@@ -735,6 +859,7 @@
 
         function renderAccordion(containerId, items) {
             const container = $(containerId);
+            container.closest('section').classList.toggle('hidden', items.length === 0); // no rows, no empty section
             const prevExpanded = container.querySelector('.accordion-card.expanded')?.dataset.id;
             container.innerHTML = items.map((item, index) => {
                 const isExpanded = prevExpanded ? item.id === prevExpanded : index === 0;
@@ -769,7 +894,7 @@
                                 <p class="text-xs text-slate-300 leading-relaxed line-clamp-2">${esc(item.description)}</p>
                                 <div class="flex items-center gap-3 pt-2">
                                     <button type="button" class="bg-brand-cyan hover:bg-brand-cyanHover text-black px-5 py-2.5 rounded-lg font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-brand-cyan/20 transition">
-                                        <i data-lucide="play" class="w-3.5 h-3.5 fill-black"></i> WATCH TRAILER
+                                        <i data-lucide="play" class="w-3.5 h-3.5 fill-black"></i> ${esc(KINDS[item.kind]?.play || 'WATCH TRAILER')}
                                     </button>
                                     <button type="button" data-watchlist class="${WL_OFF}"></button>
                                 </div>
@@ -788,7 +913,22 @@
                 btn.addEventListener('click', (e) => { e.stopPropagation(); toggleWatchlist(id, btn); });
             });
             lucide.createIcons();
+            refreshScrollButtons(containerId);
         }
+
+        function refreshScrollButtons(containerId) {
+            const row = $(containerId);
+            const controls = document.querySelector(`[data-scroll-controls="${containerId}"]`);
+            if (row && controls) controls.classList.toggle('hidden', row.scrollWidth <= row.clientWidth + 1);
+        }
+
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-scroll-for]');
+            if (!btn) return;
+            const row = $(btn.dataset.scrollFor);
+            row.scrollBy({ left: Number(btn.dataset.dir) * row.clientWidth * 0.8, behavior: 'smooth' });
+        });
+        window.addEventListener('resize', () => SCROLL_ROWS.forEach(refreshScrollButtons));
 
         function handleAccordionHover(containerId, activeId) {
             $(containerId).querySelectorAll('.accordion-card').forEach((card) => {
@@ -801,7 +941,7 @@
         function openTitleTrailer(id) {
             guardedCall('watch trailers', async () => {
                 const t = await api(`/titles/${encodeURIComponent(id)}/trailer`);
-                openTrailerModal(t.title, t.trailerUrl);
+                openTrailerModal(t.title, t.trailerUrl, KINDS[t.kind]?.clip);
             });
         }
 
@@ -901,6 +1041,45 @@
 
         $('live-lock-btn').addEventListener('click', () => promptLogin('watch live channels', null));
 
+        /* ---------- Gameplay live ---------- */
+
+        async function loadGameplay() {
+            const { streams, totalViewers } = await api('/gameplay-live');
+            const row = $('gameplay-grid');
+            row.closest('section').classList.toggle('hidden', streams.length === 0);
+            $('gameplay-viewers').textContent = viewersLabel(totalViewers);
+            row.innerHTML = streams.map((s) => `
+                <div data-id="${esc(s.id)}" tabindex="0" role="button" class="group shrink-0 w-72 glass-card rounded-2xl overflow-hidden cursor-pointer hover:border-brand-cyan focus:border-brand-cyan focus:outline-none transition duration-300">
+                    <div class="relative aspect-video bg-slate-800 overflow-hidden">
+                        <img src="${esc(s.thumbnailUrl)}" alt="${esc(s.title)}" class="w-full h-full object-cover brightness-90 group-hover:scale-105 transition duration-500">
+                        <span class="absolute top-3 left-3 flex items-center gap-1 text-[10px] font-black text-white bg-brand-redLive px-2 py-0.5 rounded"><span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> LIVE</span>
+                        <span class="absolute bottom-3 left-3 text-[11px] font-bold text-white bg-black/70 px-2 py-0.5 rounded"><i data-lucide="eye" class="w-3 h-3 inline"></i> ${viewersLabel(s.viewers)}</span>
+                    </div>
+                    <div class="p-4 flex gap-3">
+                        <span class="w-9 h-9 shrink-0 rounded-full bg-brand-cyan text-black flex items-center justify-center font-black">${esc(s.streamer.charAt(0).toUpperCase())}</span>
+                        <div class="min-w-0">
+                            <h4 class="text-sm font-extrabold text-white truncate group-hover:text-brand-cyan transition">${esc(s.title)}</h4>
+                            <p class="text-xs text-slate-400 truncate">${esc(s.streamer)} • ${esc(s.game)}</p>
+                            <p class="text-[10px] font-bold text-brand-cyan uppercase mt-1">${esc(s.language)}</p>
+                        </div>
+                    </div>
+                </div>`).join('');
+            row.querySelectorAll('[data-id]').forEach((card) => {
+                const play = () => playStream(card.dataset.id);
+                card.addEventListener('click', play);
+                card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); } });
+            });
+            lucide.createIcons();
+            refreshScrollButtons('gameplay-grid');
+        }
+
+        function playStream(id) {
+            guardedCall('watch gameplay streams', async () => {
+                const s = await api(`/gameplay-live/${encodeURIComponent(id)}/stream`);
+                openTrailerModal(`${s.streamer} · ${s.game}`, s.streamUrl, 'Live');
+            });
+        }
+
         /* ---------- Coming soon ---------- */
 
         const REMIND_OFF = 'mt-2 text-xs text-brand-cyan font-bold flex items-center gap-1.5 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700 hover:border-brand-cyan transition';
@@ -954,7 +1133,7 @@
                     <div class="aspect-[3/4] overflow-hidden"><img src="${esc(t.imageUrl)}" alt="${esc(t.title)}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"></div>
                     <div class="p-3">
                         <h4 class="text-xs font-black text-white uppercase truncate">${esc(t.title)}</h4>
-                        <p class="text-[11px] text-slate-400 mt-0.5"><span class="text-amber-400 font-bold">${Number(t.rating).toFixed(1)}</span> • ${esc(t.year)} • ${esc(t.kind === 'movie' ? 'Movie' : 'Series')}</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5"><span class="text-amber-400 font-bold">${Number(t.rating).toFixed(1)}</span> • ${esc(t.year)} • ${esc(KINDS[t.kind]?.label || 'Title')}</p>
                     </div>
                 </button>`;
         }
@@ -969,6 +1148,7 @@
             if (r.titles.length) parts.push(block('Movies & series', `<div class="grid grid-cols-2 md:grid-cols-4 gap-4">${r.titles.map(titleCardHTML).join('')}</div>`));
             if (r.channels.length) parts.push(block('Live channels', `<div class="space-y-2">${r.channels.map((c) => row('data-open-channel', c.id, c.name, c.show)).join('')}</div>`));
             if (r.upcoming.length) parts.push(block('Coming soon', `<div class="space-y-2">${r.upcoming.map((c) => row('data-open-upcoming', c.id, c.title, c.releaseLabel)).join('')}</div>`));
+            if (r.streams.length) parts.push(block('Gameplay live', `<div class="space-y-2">${r.streams.map((s) => row('data-open-stream', s.id, `${s.streamer} · ${s.game}`, s.title)).join('')}</div>`));
             if (r.genres.length) parts.push(block('Genres', `<div class="space-y-2">${r.genres.map((g) => row('data-open-genre', g.slug, g.name, 'Browse')).join('')}</div>`));
             return parts.length ? parts.join('') : `<p class="text-sm text-slate-400">Nothing matched. Try a title, a channel or a genre.</p>`;
         }
@@ -988,7 +1168,9 @@
             const channel = e.target.closest('[data-open-channel]');
             const upcoming = e.target.closest('[data-open-upcoming]');
             const genre = e.target.closest('[data-open-genre]');
+            const stream = e.target.closest('[data-open-stream]');
             if (title) openTitleTrailer(title.dataset.openTitle);
+            else if (stream) playStream(stream.dataset.openStream);
             else if (channel) { closeResults(); document.getElementById('live-tv').scrollIntoView({ behavior: 'smooth' }); tuneChannel(channel.dataset.openChannel); }
             else if (upcoming) { closeResults(); document.getElementById('coming-soon').scrollIntoView({ behavior: 'smooth' }); }
             else if (genre) openGenre(genre.dataset.openGenre);
@@ -1013,9 +1195,12 @@
 
         /* ---------- Trailer modal ---------- */
 
-        function openTrailerModal(title, url) {
-            $('trailer-modal-title').textContent = title + ' - Official Trailer';
-            $('trailer-iframe').src = url + '?autoplay=1';
+        function withAutoplay(url) {
+            try { const u = new URL(url); u.searchParams.set('autoplay', '1'); return u.toString(); } catch { return url; }
+        }
+        function openTrailerModal(title, url, label = 'Official Trailer') {
+            $('trailer-modal-title').textContent = `${title} - ${label}`;
+            $('trailer-iframe').src = withAutoplay(url);
             $('trailer-modal').classList.remove('hidden');
         }
         function closeTrailerModal() {
@@ -1035,7 +1220,7 @@
         window.onload = async function () {
             await restoreSession();
             renderAuthSlot();
-            const loaders = [loadHero, loadGenres, loadMovies, loadSeries, loadChannels, loadComingSoon];
+            const loaders = [loadHero, loadGenres, loadRows, loadChannels, loadGameplay, loadComingSoon];
             const results = await Promise.allSettled(loaders.map((fn) => fn()));
             if (results.some((r) => r.status === 'rejected')) toast('Some content could not be loaded. Is the API running?');
             lucide.createIcons();

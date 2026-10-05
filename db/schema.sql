@@ -22,19 +22,22 @@ CREATE TABLE IF NOT EXISTS genres (
 CREATE TABLE IF NOT EXISTS hero_slides (
   id          SERIAL PRIMARY KEY,
   title       VARCHAR(120)  NOT NULL,
-  rating      NUMERIC(3,1)  NOT NULL CHECK (rating BETWEEN 0 AND 10),
+  rating      NUMERIC(3,1)  CHECK (rating BETWEEN 0 AND 10),   -- NULL for live streams
   quality     VARCHAR(60)   NOT NULL,              -- "2h 18m · 4K ULTRA HD"
   genre_label VARCHAR(80)   NOT NULL,
+  badge       VARCHAR(60),                         -- e.g. "GOLDEN GLOBE NOMINEE" (optional)
   description TEXT          NOT NULL,
   image_url   TEXT          NOT NULL,
   trailer_url TEXT          NOT NULL,
-  sort_order  INT           NOT NULL DEFAULT 0
+  sort_order  INT           NOT NULL DEFAULT 0,
+  cta_label     VARCHAR(30)   NOT NULL DEFAULT 'WATCH TRAILER',
+  rating_source VARCHAR(20)   NOT NULL DEFAULT 'IMDB'
 );
 
 -- "Feature Movies" and "Trending TV Series" share one table
 CREATE TABLE IF NOT EXISTS titles (
   id          VARCHAR(12)  PRIMARY KEY,
-  kind        VARCHAR(10)  NOT NULL CHECK (kind IN ('movie', 'series')),
+  kind        VARCHAR(12)  NOT NULL CHECK (kind IN ('movie', 'series', 'program', 'cartoon', 'game_video')),
   badge       VARCHAR(60)  NOT NULL,
   quality     VARCHAR(40)  NOT NULL,
   title       VARCHAR(120) NOT NULL,
@@ -97,4 +100,21 @@ CREATE TABLE IF NOT EXISTS reminders (
   coming_soon_id INT         NOT NULL REFERENCES coming_soon(id) ON DELETE CASCADE,
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
   PRIMARY KEY (user_id, coming_soon_id)
+);
+
+-- for databases created before the badge column existed
+ALTER TABLE hero_slides ADD COLUMN IF NOT EXISTS badge VARCHAR(60);
+
+-- Live gameplay streams by gamers
+CREATE TABLE IF NOT EXISTS gameplay_streams (
+  id            VARCHAR(12)  PRIMARY KEY,
+  streamer      VARCHAR(60)  NOT NULL,
+  game          VARCHAR(80)  NOT NULL,
+  title         VARCHAR(140) NOT NULL,
+  description   TEXT         NOT NULL,
+  language      VARCHAR(30)  NOT NULL DEFAULT 'Arabic',
+  viewers_count INT          NOT NULL DEFAULT 0,
+  thumbnail_url TEXT         NOT NULL,
+  stream_url    TEXT         NOT NULL,
+  sort_order    INT          NOT NULL DEFAULT 0
 );

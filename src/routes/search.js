@@ -15,7 +15,7 @@ router.get('/', requireAuth, validate(querySchema, 'query'), asyncHandler(async 
   // escape LIKE wildcards so "100%" is searched literally
   const pattern = `%${req.query.q.replace(/[\\%_]/g, '\\$&')}%`;
 
-  const [titles, channels, upcoming, genres] = await Promise.all([
+  const [titles, channels, upcoming, genres, streams] = await Promise.all([
     db.query(
       `SELECT t.id, t.kind, t.title, t.year, t.rating::float AS rating, t.duration, t.image_url AS "imageUrl"
        FROM titles t
@@ -30,6 +30,9 @@ router.get('/', requireAuth, validate(querySchema, 'query'), asyncHandler(async 
       `SELECT id, title, upper(to_char(release_date, 'FMMonth YYYY')) AS "releaseLabel" FROM coming_soon
        WHERE title ILIKE $1 OR description ILIKE $1 ORDER BY sort_order LIMIT 10`, [pattern]),
     db.query('SELECT slug, name FROM genres WHERE name ILIKE $1 ORDER BY sort_order LIMIT 10', [pattern]),
+    db.query(
+      `SELECT id, streamer, game, title FROM gameplay_streams
+       WHERE streamer ILIKE $1 OR game ILIKE $1 OR title ILIKE $1 ORDER BY viewers_count DESC LIMIT 10`, [pattern]),
   ]);
 
   res.json({
@@ -38,6 +41,7 @@ router.get('/', requireAuth, validate(querySchema, 'query'), asyncHandler(async 
     channels: channels.rows,
     upcoming: upcoming.rows,
     genres: genres.rows,
+    streams: streams.rows,
   });
 }));
 

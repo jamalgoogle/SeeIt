@@ -63,9 +63,9 @@ const countStars = (s) => (s.match(/★/g) || []).length;
 
     for (const [i, s] of data.heroSlides.entries()) {
       await client.query(
-        `INSERT INTO hero_slides (title, rating, quality, genre_label, description, image_url, trailer_url, sort_order)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-        [s.title, parseFloat(s.rating.replace(/[^\d.]/g, '')), s.quality, s.genre, s.desc, s.image, s.trailer, i]
+        `INSERT INTO hero_slides (title, rating, quality, genre_label, badge, description, image_url, trailer_url, sort_order)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [s.title, parseFloat(s.rating.replace(/[^\d.]/g, '')), s.quality, s.genre, 'GOLDEN GLOBE NOMINEE', s.desc, s.image, s.trailer, i]
       );
     }
 

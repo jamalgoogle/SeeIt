@@ -42,6 +42,7 @@ app.get('/api/health', async (_req, res) => {
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/channels', require('./routes/channels'));
+app.use('/api/gameplay-live', require('./routes/gameplay'));
 app.use('/api/coming-soon', require('./routes/comingSoon'));
 app.use('/api/watchlist', require('./routes/watchlist'));
 app.use('/api/search', require('./routes/search'));

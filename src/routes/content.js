@@ -20,7 +20,8 @@ const inWatchlist = (userParam) => `
 // GET /api/hero-slides  (public, no trailer URLs)
 router.get('/hero-slides', asyncHandler(async (_req, res) => {
   const { rows } = await db.query(
-    `SELECT id, title, rating::float AS rating, quality, genre_label AS genre, description, image_url AS image
+    `SELECT id, title, rating::float AS rating, rating_source AS "ratingSource", quality, genre_label AS genre,
+            badge, cta_label AS "ctaLabel", description, image_url AS image
      FROM hero_slides ORDER BY sort_order`
   );
   res.json({ slides: rows });
@@ -70,9 +71,12 @@ const listByKind = (kind, key) => asyncHandler(async (req, res) => {
   res.json({ [key]: rows });
 });
 
-// GET /api/movies, GET /api/series  (public; inWatchlist is filled in when a valid token is sent)
+// GET /api/movies, /series, /programs, /cartoons, /game-videos  (public; inWatchlist is filled in when a valid token is sent)
 router.get('/movies', optionalAuth, listByKind('movie', 'movies'));
 router.get('/series', optionalAuth, listByKind('series', 'series'));
+router.get('/programs', optionalAuth, listByKind('program', 'programs'));
+router.get('/cartoons', optionalAuth, listByKind('cartoon', 'cartoons'));
+router.get('/game-videos', optionalAuth, listByKind('game_video', 'gameVideos'));
 
 const titleIdParam = z.object({ id: z.string().regex(/^[a-z0-9]{1,12}$/, 'Invalid id') });
 
@@ -91,7 +95,7 @@ router.get('/titles/:id', requireAuth, validate(titleIdParam, 'params'), asyncHa
 
 // GET /api/titles/:id/trailer  (login required)
 router.get('/titles/:id/trailer', requireAuth, validate(titleIdParam, 'params'), asyncHandler(async (req, res) => {
-  const { rows } = await db.query('SELECT id, title, trailer_url AS "trailerUrl" FROM titles WHERE id = $1', [req.params.id]);
+  const { rows } = await db.query('SELECT id, kind, title, trailer_url AS "trailerUrl" FROM titles WHERE id = $1', [req.params.id]);
   if (!rows[0]) return res.status(404).json({ error: 'Title not found' });
   res.json(rows[0]);
 }));
