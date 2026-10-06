@@ -555,7 +555,13 @@
         let searchTimer = null;
 
         // A missing image should leave a dark card, not a broken-image icon.
-        document.addEventListener('error', (e) => { if (e.target.tagName === 'IMG') e.target.style.visibility = 'hidden'; }, true);
+        // YouTube thumbnails: not every video has the 1080p one, so fall back to the smaller one that always exists.
+        document.addEventListener('error', (e) => {
+            const img = e.target;
+            if (img.tagName !== 'IMG') return;
+            if (/\/maxresdefault(_live)?\.jpg/.test(img.src)) { img.src = img.src.replace(/maxresdefault(_live)?\.jpg/, 'mqdefault.jpg'); return; }
+            img.style.visibility = 'hidden';
+        }, true);
 
         const $ = (id) => document.getElementById(id);
         const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

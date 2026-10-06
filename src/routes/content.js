@@ -33,7 +33,6 @@ router.get('/hero-slides/:id/trailer', requireAuth, validate(idParam, 'params'),
   if (!rows[0]) return res.status(404).json({ error: 'Slide not found' });
   res.json(rows[0]);
 }));
-
 // ---- Genres ---------------------------------------------------------------
 
 // GET /api/genres  (public)
